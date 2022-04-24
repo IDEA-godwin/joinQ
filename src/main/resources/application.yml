@@ -1,0 +1,10 @@
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/join_q
+    username: godwin
+    password: aquinas137
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
