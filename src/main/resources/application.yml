@@ -1,10 +1,14 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/join_q
+    url: jdbc:postgresql://localhost:5432/joinq
     username: godwin
     password: aquinas137
   jpa:
-    open-in-view: false
+    open-in-view: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
+
+server:
+  error:
+    include-stacktrace: never
