@@ -12,9 +12,11 @@ import java.util.List;
 public interface LineService {
 
     Page<WaitingLine> getLine(Queue queue, int page, int size);
-    WaitingLine getWaitingUserByTicket(String ticket);
+    WaitingLine getWaitingUserById(String id);
+    WaitingLine callNextInLine(String ticket);
     List<WaitingLine> getAllLineWithUser(User user);
     WaitingLine addToLine(Queue queue, User user);
     void removeFromLine(String id);
+    void deleteAllFromLine(Queue queue);
     Long lineCount(Queue queue);
 }

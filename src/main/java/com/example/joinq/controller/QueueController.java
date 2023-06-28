@@ -1,27 +1,29 @@
 package com.example.joinq.controller;
 
+import com.example.joinq.domain.dto.CreateQueueDTO;
 import com.example.joinq.domain.entities.Queue;
 import com.example.joinq.domain.entities.User;
 import com.example.joinq.domain.entities.WaitingLine;
+import com.example.joinq.service.LineService;
 import com.example.joinq.service.QueueService;
-import com.example.joinq.serviceImpl.QueueServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/queues")
+@RequestMapping("/api/queues")
+@AllArgsConstructor
 public class QueueController {
 
     private final QueueService queueService;
-
-    public QueueController(QueueService queueService) {
-        this.queueService = queueService;
-    }
+    private final LineService lineService;
 
     @PostMapping
-    public ResponseEntity<Queue> createQueue() {
-        return ResponseEntity.ok(queueService.createQueue());
+    public ResponseEntity<Queue> createQueue(@RequestBody CreateQueueDTO queueDTO) {
+        return ResponseEntity.ok(queueService.createQueue(queueDTO));
     }
 
     @GetMapping("/{queueId}")
@@ -36,14 +38,44 @@ public class QueueController {
         return ResponseEntity.ok(queueService.getWaitingUsersOnQueue(queueId, page, size));
     }
 
-    @PatchMapping("/{queueId}/join-queue")
-    public ResponseEntity<WaitingLine> joinQueue(@PathVariable String queueId, @RequestBody User user) {
-        return ResponseEntity.ok(queueService.joinQueue(queueId, user));
+    @GetMapping("/users/{username}/queues-lines")
+    public ResponseEntity<List<WaitingLine>> getAllUserLines(@PathVariable String username) {
+        return ResponseEntity.ok().body(queueService.getAllUserLine(username));
     }
 
-    @PatchMapping("/{queueId}/call-next")
+    @GetMapping("/waiting-users/{id}")
+    public ResponseEntity<WaitingLine> getWaitingUserById(@PathVariable String id) {
+        return ResponseEntity.ok().body(lineService.getWaitingUserById(id));
+    }
+
+    @GetMapping("/organizations/{organizationId}")
+    public ResponseEntity<List<Queue>> getAllOrganizationQueues(@PathVariable String organizationId) {
+        return ResponseEntity.ok().body(queueService.getAllOrganizationQueues(organizationId));
+    }
+
+    @GetMapping("/{queueId}/number-on-queue")
+    public ResponseEntity<Long> getNumberOnQueue(@PathVariable String queueId) {
+        return ResponseEntity.ok().body(queueService.getNumberOnQueue(queueId));
+    }
+
+    @PostMapping("/{queueCode}/join-queue")
+    public ResponseEntity<WaitingLine> joinQueue(@PathVariable String queueCode, @RequestBody String userId) {
+        return ResponseEntity.ok(queueService.joinQueue(queueCode, userId));
+    }
+
+    @PostMapping("/{queueId}/call-next")
     public ResponseEntity<WaitingLine> callNext(@PathVariable String queueId) {
         return ResponseEntity.ok(queueService.callNext(queueId));
+    }
+
+    @PostMapping("/{queueId}/open")
+    public ResponseEntity<Queue> openQueue(@PathVariable String queueId) {
+        return ResponseEntity.ok().body(queueService.openQueue(queueId));
+    }
+
+    @PostMapping("/{queueId}/close")
+    public ResponseEntity<Queue> closeQueue(@PathVariable String queueId) {
+        return ResponseEntity.ok().body(queueService.closeQueue(queueId));
     }
 
     @DeleteMapping("/leave-queue/{slotId}")

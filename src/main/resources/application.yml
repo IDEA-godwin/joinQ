@@ -12,3 +12,6 @@ spring:
 server:
   error:
     include-stacktrace: never
+
+app:
+  firebase-config-file: firebase/firebase-minsdk.json
